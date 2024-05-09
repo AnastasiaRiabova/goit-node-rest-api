@@ -25,11 +25,24 @@ async function removeContact(contactId) {
     return deletedContact
 }
 
-async function addContact(name, email, phone) {
+async function addContact({name, email, phone}) {
     const contacts = await listContacts()
     const contactForAdd = {name, email, phone, id:uuidv4()}
     fs.writeFile(contactsPath, JSON.stringify([...contacts,contactForAdd],null, 2));
     return contactForAdd
 }
+async function updateContact ({id, ...body}) {
+    const contacts = await listContacts()
+    const index = contacts.findIndex(contact => contact.id === id)
 
-export {listContacts, getContactById, removeContact, addContact}
+    if (index !== -1) {
+        const contactForAdd = {...contacts[index], ...body}
+        contacts[index] = contactForAdd
+        fs.writeFile(contactsPath, JSON.stringify(contacts,null, 2));
+        return contactForAdd
+    }
+
+    return null
+}
+
+export {listContacts, getContactById, removeContact, addContact, updateContact}

@@ -1,4 +1,4 @@
-import  {listContacts, getContactById, removeContact, addContact} from "../services/contactsServices.js";
+import  {listContacts, getContactById, removeContact, addContact, updateContact as update} from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = async (req, res, next) => {
@@ -31,7 +31,7 @@ export const getOneContact = async (req, res, next) => {
                 },
             });
         }
-        throw HttpError(404, 'not found')
+        throw HttpError(404, 'Not found')
     }
     catch (error) {
         next(error)
@@ -39,8 +39,62 @@ export const getOneContact = async (req, res, next) => {
 
 };
 
-export const deleteContact = (req, res) => {};
+export const deleteContact = async (req, res) => {
+    try {
+        const {id} = req.params
+        const contact = await removeContact(id)
+        if (contact) {
+            return res.json({
+                status: 'success',
+                code: 200,
+                data: {
+                    contact
+                },
+            });
+        }
+        throw HttpError(404, 'Not found')
+    }
+    catch (error) {
+        next(error)
+    }
+};
 
-export const createContact = (req, res) => {};
+export const createContact = async (req, res, next) => {
+    try {
+        const {name, email, phone} = req.body
+        const newContact= await addContact({name, email, phone})
+        if (!newContact){
+            throw HttpError(404, 'something went wrong')
+        }
+        return res.json({
+            status: 'success',
+            code: 201,
+            data: {
+                newContact
+            },
+        });
+    }catch (error) {
+        next(error)
+    }
 
-export const updateContact = (req, res) => {};
+};
+
+export const updateContact = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const {name, email, phone} = req.body
+        const updatedContact= await update({id, name, email, phone})
+        if (!updatedContact){
+            throw HttpError(404, 'Not found')
+        }
+        return res.json({
+            status: 'success',
+            code: 200,
+            data: {
+                updatedContact
+            },
+        });
+    }catch (error) {
+        next(error)
+    }
+};
