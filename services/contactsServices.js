@@ -31,11 +31,12 @@ async function addContact({name, email, phone}) {
     fs.writeFile(contactsPath, JSON.stringify([...contacts,contactForAdd],null, 2));
     return contactForAdd
 }
-async function updateContact ({id, ...body}) {
+async function updateContact (id, body) {
     const contacts = await listContacts()
     const index = contacts.findIndex(contact => contact.id === id)
 
     if (index !== -1) {
+        console.log(contacts[index], body)
         const contactForAdd = {...contacts[index], ...body}
         contacts[index] = contactForAdd
         fs.writeFile(contactsPath, JSON.stringify(contacts,null, 2));
