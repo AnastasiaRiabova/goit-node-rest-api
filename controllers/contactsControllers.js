@@ -1,4 +1,11 @@
-import  { listContacts, getContactById, removeContact, addContact, updateContact as update } from "../services/contactsServices.js";
+import {
+    listContacts,
+    getContactById,
+    removeContact,
+    addContact,
+    updateContact as update,
+    updateStatusContact
+} from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = async (req, res, next) => {
@@ -19,10 +26,9 @@ export const getOneContact = async (req, res, next) => {
         if (contact) {
             return res.status(200).json(contact)
         }
-        throw HttpError(404, 'Not found')
     }
     catch (error) {
-        next(error)
+        next( HttpError(404, 'Not found'))
     }
 
 };
@@ -43,8 +49,8 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
     try {
-        const {name, email, phone} = req.body
-        const newContact= await addContact({name, email, phone})
+        const {name, email, phone, favorite} = req.body
+        const newContact= await addContact({name, email, phone, favorite})
         if (!newContact){
             throw HttpError(404, 'something went wrong')
         }
@@ -59,11 +65,19 @@ export const updateContact = async (req, res, next) => {
     try {
         const {id} = req.params
         const updatedContact= await update(id, req.body)
-        if (!updatedContact){
-            throw HttpError(404, 'Not found')
-        }
-       return  res.status(200).json(updatedContact)
+       return res.status(200).json(updatedContact)
     } catch (error) {
-        next(error)
+        next(HttpError(404, 'Not found'))
+    }
+};
+
+
+export const updateContactStatus = async (req, res, next) => {
+    try {
+        const {id} = req.params
+        const updatedContact= await updateStatusContact(id, req.body)
+        return  res.status(200).json(updatedContact)
+    } catch (error) {
+        next(HttpError(404, 'Not found'))
     }
 };

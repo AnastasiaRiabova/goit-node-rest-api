@@ -1,49 +1,26 @@
-import fs from "fs/promises";
-import path from "path";
-import { v4 as uuidv4 } from 'uuid';
-
-const contactsPath = path.resolve('db', 'contacts.json');
+import Contacts from "../schemas/contactsSchema.js";
 
 async function listContacts() {
-    const contacts = await fs.readFile(contactsPath)
-    return JSON.parse(contacts)
+   return Contacts.find()
 }
 
-async function getContactById(contactId) {
-    const contacts = await listContacts()
-    return contacts.find( contact => contact.id === contactId) || null
+async function getContactById(_id) {
+    return Contacts.findOne({_id})
 }
 
-async function removeContact(contactId) {
-    const contacts = await listContacts()
-    const index = contacts.findIndex(contact => contact.id === contactId);
-    if (index === -1) {
-        return null;
-    }
-    const [deletedContact] = contacts.splice(index, 1);
-    fs.writeFile(contactsPath, JSON.stringify(contacts,null, 2));
-    return deletedContact
+async function removeContact(_id) {
+    return Contacts.findOneAndDelete({_id})
 }
 
-async function addContact({name, email, phone}) {
-    const contacts = await listContacts()
-    const contactForAdd = {name, email, phone, id:uuidv4()}
-    fs.writeFile(contactsPath, JSON.stringify([...contacts,contactForAdd],null, 2));
-    return contactForAdd
+async function addContact({...body}) {
+    return Contacts.create(body)
 }
-async function updateContact (id, body) {
-    const contacts = await listContacts()
-    const index = contacts.findIndex(contact => contact.id === id)
-
-    if (index !== -1) {
-        console.log(contacts[index], body)
-        const contactForAdd = {...contacts[index], ...body}
-        contacts[index] = contactForAdd
-        fs.writeFile(contactsPath, JSON.stringify(contacts,null, 2));
-        return contactForAdd
-    }
-
-    return null
+async function updateContact (_id, body) {
+    return Contacts.findByIdAndUpdate({_id}, body, {new: true})
 }
 
-export {listContacts, getContactById, removeContact, addContact, updateContact}
+async function updateStatusContact (_id, value) {
+    return Contacts.findByIdAndUpdate({_id}, value, {new: true})
+}
+
+export {listContacts, getContactById, removeContact, addContact, updateContact, updateStatusContact}
