@@ -26,9 +26,10 @@ export const getOneContact = async (req, res, next) => {
         if (contact) {
             return res.status(200).json(contact)
         }
+       throw HttpError(404, 'Not found')
     }
     catch (error) {
-        next( HttpError(404, 'Not found'))
+        next(error)
     }
 
 };
@@ -65,9 +66,13 @@ export const updateContact = async (req, res, next) => {
     try {
         const {id} = req.params
         const updatedContact= await update(id, req.body)
-       return res.status(200).json(updatedContact)
+        if (updatedContact) {
+
+            return res.status(200).json(updatedContact)
+        }
+        throw HttpError(404, 'Not found');
     } catch (error) {
-        next(HttpError(404, 'Not found'))
+        next(error)
     }
 };
 
@@ -76,8 +81,11 @@ export const updateContactStatus = async (req, res, next) => {
     try {
         const {id} = req.params
         const updatedContact= await updateStatusContact(id, req.body)
-        return  res.status(200).json(updatedContact)
+        if (updatedContact){
+            return res.status(200).json(updatedContact)
+        }
+        throw HttpError(404, 'Not found');
     } catch (error) {
-        next(HttpError(404, 'Not found'))
+        next(error)
     }
 };
