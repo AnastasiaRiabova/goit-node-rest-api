@@ -64,7 +64,7 @@ export const getCurrent = (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   try {
-    const { _id } = req.body;
+    const { _id } = req.user;
     await findAndUpdateUser({ _id }, { token: null });
     res.status(204).json({});
   } catch (error) {

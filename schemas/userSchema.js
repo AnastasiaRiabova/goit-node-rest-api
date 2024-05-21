@@ -4,16 +4,15 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: [true, "User must have username"],
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, "Email is required"],
       unique: true,
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: [true, "Password is required"],
     },
     subscription: {
       type: String,
@@ -25,7 +24,7 @@ const userSchema = new Schema(
       default: null,
     },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false, timestamps: true },
 );
 
 const User = model("user", userSchema);
