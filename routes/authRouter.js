@@ -5,11 +5,14 @@ import {
   register,
   logout,
   getCurrent,
+  verify,
+  sendEmailAgain,
 } from "../controllers/authControllers.js";
 
 import {
   signUpUserSchema,
   signInUserSchema,
+  verifySchema,
 } from "../schemas/usersJoiSchemas.js";
 
 import validateBody from "../helpers/validateBody.js";
@@ -18,6 +21,10 @@ import { isAuth } from "../helpers/isAuth.js";
 const authRouter = express.Router();
 
 authRouter.post("/register", validateBody(signUpUserSchema), register);
+
+authRouter.get("/verify/:id", verify);
+
+authRouter.post("/verify/", validateBody(verifySchema), sendEmailAgain);
 
 authRouter.post("/login", validateBody(signInUserSchema), login);
 
