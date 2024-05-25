@@ -7,7 +7,6 @@ import path from "path";
 import "dotenv/config";
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/authRouter.js";
-import userRouter from "./routes/userRouter.js";
 
 const app = express();
 mongoose
@@ -27,8 +26,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api/contacts", contactsRouter);
 app.use("/users", authRouter);
-app.use("/avatars", userRouter);
-app.use("/avatars", express.static(path.resolve("public", "avatars")));
+app.use("/users/avatars", express.static(path.resolve("public", "avatars")));
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
