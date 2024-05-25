@@ -2,9 +2,13 @@ import fs from "fs/promises";
 import path from "path";
 import Jimp from "jimp";
 import User from "../schemas/userSchema.js";
+import HttpError from "../helpers/HttpError.js";
 
 export const updateUser = async (req, res, next) => {
   try {
+    if (!req.file) {
+      throw HttpError(400, "File is missing");
+    }
     const { path: tempPath, filename } = req.file;
     const tempFilePath = path.resolve(tempPath);
     const outputDir = path.resolve("public", "avatars");
@@ -16,8 +20,7 @@ export const updateUser = async (req, res, next) => {
     await fs.mkdir(outputDir, { recursive: true });
 
     await fs.rename(tempFilePath, outputFilePath);
-
-    const avatarURL = `${filename}`;
+    const avatarURL = path.join("avatars", filename);
     const result = await User.findByIdAndUpdate(
       req.user._id,
       { avatarURL },
